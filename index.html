@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sistema de Caixa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial;
+      margin: 0;
+      padding: 20px;
+      background: #f4f4f4;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+      flex-grow: 1;
+      position: relative;
+    }
+
+    .col-esquerda,
+    .col-direita {
+      background: #fff;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .produto {
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    input[type="text"] {
+      width: 60px;
+      padding: 5px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #28a745;
+      box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2);
+    }
+
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+      margin-top: 10px;
+    }
+
+    li {
+      background: #fff;
+      margin: 3px 0;
+      padding: 6px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    #notaFiscal h2 {
+      margin-top: 0;
+    }
+
+    .rodape {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+      padding: 15px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      font-size: 16px;
+    }
+
+    .rodape div {
+      flex: 1;
+      text-align: center;
+    }
+
+    .rodape button {
+      width: auto;
+      padding: 8px 15px;
+      font-size: 16px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .rodape button:hover {
+      background-color: #218838;
+    }
+
+    /* Teclado no canto superior direito */
+    .teclado-numerico {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+      border-radius: 8px;
+      padding: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      width: 220px;
+      max-width: 90vw;
+      user-select: none;
+    }
+
+    .fechar-teclado-btn {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 28px;
+      height: 28px;
+      background-color: red;
+      color: white;
+      font-size: 18px;
+      text-align: center;
+      line-height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+      z-index: 1001;
+    }
+
+    .teclado-numerico h3 {
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 16px;
+      cursor: default;
+    }
+
+    .teclado-numerico button {
+      width: calc(30% - 8px);
+      height: 40px;
+      margin: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      border: 1px solid #aaa;
+      border-radius: 5px;
+      background-color: #fff;
+    }
+
+    .teclado-numerico button.enter {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .teclado-numerico button.backspace {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .teclado-numerico {
+        position: static;
+        width: 100%;
+        margin-top: 20px;
+        top: auto;
+        right: auto;
+        transform: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .fechar-teclado-btn {
+        display: none;
+      }
+    }
+
+    .nota-item {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+    }
+
+    .nota-header {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    #mensagemValidacao {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Sistema de Caixa</h1>
+
+<div class="container">
+  <!-- Coluna Esquerda -->
+  <div class="col-esquerda">
+    <div class="produto">
+      <label for="quantidadePaoFrances">PAO FRANCES:</label>
+      <input type="text" id="quantidadePaoFrances" onclick="abrirTeclado(this)">
+      <span id="resultadoPaoFrances">R$ 0,00</span>
+    </div>
+
+    <div class="produto">
+      <label for="quantidadePaoDoceComum">PAO COMUM:</label>
+      <input type="text" id="quantidadePaoDoceComum" onclick="abrirTeclado(this)">
+      <span id="resultadoPaoDoceComum">R$ 0,00</span>
+    </div>
+
+    <div class="produto">
+      <label for="quantidadePaoDoceEspecial">PAO DOCE ESPECIAL:</label>
+      <input type="text" id="quantidadePaoDoceEspecial" onclick="abrirTeclado(this)">
+      <span id="resultadoPaoDoceEspecial">R$ 0,00</span>
+    </div>
+
+    <div class="produto">
+      <label for="valorEntrada">OUTRO PRODUTO (R$):</label>
+      <input type="text" id="valorEntrada" placeholder="Digite valor" onclick="abrirTeclado(this)">
+      <span id="resultadoAcumulado">R$ 0,00</span>
+    </div>
+
+    <!-- Rodapé dentro da coluna esquerda -->
+    <div class="rodape">
+      <div>
+        <strong>Total:</strong><br>
+        <span id="valorTotal">R$ 0,00</span>
+      </div>
+      <div>
+        <strong>Recebido:</strong><br>
+        <input type="text" id="valorRecebido" onclick="abrirTeclado(this)">
+      </div>
+      <div>
+        <strong>Troco:</strong><br>
+        <span id="valorTroco">R$ 0,00</span>
+      </div>
+      <div style="text-align:right;">
+        <button onclick="proximoCliente()">Finalizar Venda</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Coluna Direita -->
+  <div class="col-direita">
+    <div id="notaFiscal">
+      <h2>Nota Fiscal</h2>
+      <ul id="listaItens"></ul>
+    </div>
+  </div>
+</div>
+
+<!-- Campos ocultos para histórico -->
+<p style="display:none"><span id="nfTotal">R$ 0,00</span></p>
+<p style="display:none"><span id="nfRecebido">R$ 0,00</span></p>
+<p style="display:none"><span id="nfTroco">R$ 0,00</span></p>
+
+<div id="historicoNotas"></div>
+
+<!-- Teclado Numérico - Agora fixo no canto superior direito -->
+<div class="teclado-numerico" id="tecladoNumerico">
+  <div class="fechar-teclado-btn" onclick="fecharTeclado()" title="Fechar">×</div>
+  <h3>Teclado Virtual</h3>
+  <div id="botoesTeclado" style="display:flex; flex-wrap:wrap; justify-content:center;"></div>
+</div>
+
+<script>
+  const botoes = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', '⌫', 'Enter'];
+  const botoesDiv = document.getElementById('botoesTeclado');
+
+  botoes.forEach(btn => {
+    const b = document.createElement('button');
+    b.textContent = btn;
+
+    if (btn === 'Enter') b.classList.add('enter');
+    else if (btn === '⌫') b.classList.add('backspace');
+
+    b.onclick = () => digitarTeclado(btn);
+    botoesDiv.appendChild(b);
+  });
+
+  let numeroNota = 1;
+  let historico = [];
+  let totalAcumulado = 0;
+  let produtosAdicionais = [];
+  let campoFocado = null;
+
+  function formatar(valor) {
+    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+
+  function atualizarNota(nome, qtd, valorUnitario, subtotal) {
+    const lista = document.getElementById('listaItens');
+    const id = `item-${nome.toLowerCase().replace(/\s+/g, '-')}`;
+
+    if (qtd <= 0) {
+      const existente = document.getElementById(id);
+      if (existente) lista.removeChild(existente);
+      return;
+    }
+
+    const linha = `${nome} x${qtd} = ${formatar(subtotal)} (${formatar(valorUnitario)})`;
+
+    let li = document.getElementById(id);
+    if (!li) {
+      li = document.createElement('li');
+      li.id = id;
+      lista.appendChild(li);
+    }
+    li.textContent = linha;
+  }
+
+  function criarCalculadora(inputId, resultadoId, precoUnitario, nomeProduto) {
+    const input = document.getElementById(inputId);
+    const resultado = document.getElementById(resultadoId);
+
+    function calcular() {
+      let qtd = parseInt(input.value) || 0;
+      let subtotal = qtd * precoUnitario;
+      resultado.textContent = formatar(subtotal);
+      atualizarNota(nomeProduto, qtd, precoUnitario, subtotal);
+      atualizarTotalGeral();
+    }
+
+    input.addEventListener('input', calcular);
+    calcular(); // Calcula inicial
+  }
+
+  criarCalculadora('quantidadePaoFrances', 'resultadoPaoFrances', 0.70, 'Pão Francês');
+  criarCalculadora('quantidadePaoDoceComum', 'resultadoPaoDoceComum', 0.70, 'Pão Doce Comum');
+  criarCalculadora('quantidadePaoDoceEspecial', 'resultadoPaoDoceEspecial', 0.80, 'Pão Doce Especial');
+
+  function abrirTeclado(campo) {
+    campoFocado = campo;
+    campo.focus();
+  }
+
+  function digitarTeclado(valor) {
+    if (campoFocado) {
+      if (valor === 'Enter') {
+        if (campoFocado.id === 'valorEntrada') adicionarOutroProduto();
+        else if (campoFocado.id === 'valorRecebido') atualizarTroco();
+        return;
+      } else if (valor === '⌫') {
+        limparCampo();
+        return;
+      }
+
+      campoFocado.value += valor;
+      const event = new Event('input', { bubbles: true });
+      campoFocado.dispatchEvent(event);
+    }
+  }
+
+  function limparCampo() {
+    if (campoFocado) {
+      campoFocado.value = '';
+      const event = new Event('input', { bubbles: true });
+      campoFocado.dispatchEvent(event);
+    }
+  }
+
+  function fecharTeclado() {
+    document.getElementById('tecladoNumerico').style.display = 'none';
+    if (campoFocado) {
+      campoFocado.blur();
+      campoFocado = null;
+    }
+  }
+
+  function adicionarOutroProduto() {
+    let valorTexto = document.getElementById('valorEntrada').value.replace(',', '.');
+    let valor = parseFloat(valorTexto);
+
+    if (!isNaN(valor) && valor > 0) {
+      const nome = 'Outro Produto';
+      const id = `item-outrosprodutos-${produtosAdicionais.length + 1}`;
+      const novoItem = { id: id, texto: `${nome} - ${formatar(valor)}` };
+
+      produtosAdicionais.push(novoItem);
+      totalAcumulado += valor;
+
+      const lista = document.getElementById('listaItens');
+      const li = document.createElement('li');
+      li.id = id;
+      li.textContent = novoItem.texto;
+      lista.appendChild(li);
+
+      document.getElementById('resultadoAcumulado').textContent = formatar(totalAcumulado);
+      document.getElementById('valorEntrada').value = '';
+      atualizarTotalGeral();
+    }
+  }
+
+  function atualizarTotalGeral() {
+    const paoFrances = parseInt(document.getElementById('quantidadePaoFrances').value) || 0;
+    const paoDoceComum = parseInt(document.getElementById('quantidadePaoDoceComum').value) || 0;
+    const paoDoceEspecial = parseInt(document.getElementById('quantidadePaoDoceEspecial').value) || 0;
+
+    const total =
+      paoFrances * 0.70 +
+      paoDoceComum * 0.70 +
+      paoDoceEspecial * 0.80 +
+      totalAcumulado;
+
+    document.getElementById('valorTotal').textContent = formatar(total);
+    document.getElementById('nfTotal').textContent = formatar(total);
+    atualizarTroco();
+  }
+
+  function atualizarTroco() {
+    const total = parseFloat(document.getElementById('valorTotal').textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+    const recebido = parseFloat(document.getElementById('valorRecebido').value.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+    const troco = recebido - total;
+    document.getElementById('valorTroco').textContent = troco >= 0 ? formatar(troco) : 'Falta pagar';
+    document.getElementById('nfRecebido').textContent = formatar(recebido);
+    document.getElementById('nfTroco').textContent = troco >= 0 ? formatar(troco) : 'Falta pagar';
+  }
+
+  function proximoCliente() {
+    const total = parseFloat(document.getElementById('valorTotal').textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+    const recebidoTexto = document.getElementById('valorRecebido').value.trim().replace(',', '.');
+    const recebido = parseFloat(recebidoTexto) || 0;
+    const msgElemento = document.getElementById('mensagemValidacao');
+
+    if (recebidoTexto === '') {
+      if (!msgElemento) {
+        const divMsg = document.createElement('div');
+        divMsg.id = 'mensagemValidacao';
+        divMsg.style.color = 'red';
+        divMsg.style.marginTop = '10px';
+        divMsg.textContent = 'Falta preencher valor recebido';
+        document.querySelector('.rodape').before(divMsg);
+      } else {
+        msgElemento.textContent = 'Falta preencher valor recebido';
+      }
+      return;
+    }
+
+    if (recebido < total) {
+      if (!msgElemento) {
+        const divMsg = document.createElement('div');
+        divMsg.id = 'mensagemValidacao';
+        divMsg.style.color = 'red';
+        divMsg.style.marginTop = '10px';
+        divMsg.textContent = 'Valor insuficiente';
+        document.querySelector('.rodape').before(divMsg);
+      } else {
+        msgElemento.textContent = 'Valor insuficiente';
+      }
+      return;
+    }
+
+    if (msgElemento) msgElemento.remove();
+
+    const itens = Array.from(document.getElementById('listaItens').children).map(li => li.textContent);
+    const data = new Date().toLocaleString();
+
+    historico.push({
+      numero: numeroNota++,
+      itens,
+      total: document.getElementById('nfTotal').textContent,
+      recebido: document.getElementById('nfRecebido').textContent,
+      troco: document.getElementById('nfTroco').textContent,
+      data
+    });
+
+    document.getElementById('quantidadePaoFrances').value = '';
+    document.getElementById('quantidadePaoDoceComum').value = '';
+    document.getElementById('quantidadePaoDoceEspecial').value = '';
+    document.getElementById('valorEntrada').value = '';
+    document.getElementById('resultadoPaoFrances').textContent = 'R$ 0,00';
+    document.getElementById('resultadoPaoDoceComum').textContent = 'R$ 0,00';
+    document.getElementById('resultadoPaoDoceEspecial').textContent = 'R$ 0,00';
+    document.getElementById('resultadoAcumulado').textContent = 'R$ 0,00';
+
+    document.getElementById('listaItens').innerHTML = '';
+    document.getElementById('valorTotal').textContent = 'R$ 0,00';
+    document.getElementById('valorRecebido').value = '';
+    document.getElementById('valorTroco').textContent = 'R$ 0,00';
+
+    document.getElementById('nfTotal').textContent = 'R$ 0,00';
+    document.getElementById('nfRecebido').textContent = 'R$ 0,00';
+    document.getElementById('nfTroco').textContent = 'R$ 0,00';
+
+    totalAcumulado = 0;
+    produtosAdicionais = [];
+
+    renderizarHistorico();
+  }
+
+  function renderizarHistorico() {
+    const container = document.getElementById('historicoNotas');
+    container.innerHTML = '<h2>Histórico de Vendas</h2>';
+    historico.forEach(nota => {
+      const div = document.createElement('div');
+      div.className = 'nota-item';
+      div.innerHTML = `
+        <div class="nota-header">Nota #${nota.numero} - ${nota.data}</div>
+        <ul>${nota.itens.map(item => `<li>${item}</li>`).join('')}</ul>
+        <div>Total: ${nota.total}</div>
+        <div>Recebido: ${nota.recebido}</div>
+        <div>Troco: ${nota.troco}</div>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  function dragElement(element) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    let touchDown = false;
+
+    element.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+      e = e || window.event;
+      e.preventDefault();
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      document.onmouseup = closeDragElement;
+      document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault();
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      element.style.top = (element.offsetTop - pos2) + 'px';
+      element.style.left = (element.offsetLeft - pos1) + 'px';
+    }
+
+    function closeDragElement() {
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+
+    element.ontouchstart = function(e) {
+      touchDown = true;
+      const t = e.touches[0];
+      pos3 = t.clientX;
+      pos4 = t.clientY;
+      document.ontouchend = closeTouchElement;
+      document.ontouchmove = touchMove;
+    };
+
+    function touchMove(e) {
+      if (!touchDown) return;
+      const t = e.touches[0];
+      pos1 = pos3 - t.clientX;
+      pos2 = pos4 - t.clientY;
+      pos3 = t.clientX;
+      pos4 = t.clientY;
+      element.style.top = (element.offsetTop - pos2) + 'px';
+      element.style.left = (element.offsetLeft - pos1) + 'px';
+    }
+
+    function closeTouchElement() {
+      touchDown = false;
+      document.ontouchend = null;
+      document.ontouchmove = null;
+    }
+  }
+
+  function registrarServiceWorker() {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('✅ Service Worker Registrado'))
+        .catch(err => console.error('❌ Erro ao Registrar SW:', err));
+    }
+  }
+
+  window.onload = () => {
+    registrarServiceWorker();
+
+    // Impede digitação física
+    document.querySelectorAll("input[type='text']").forEach(input => {
+      input.addEventListener('keydown', e => e.preventDefault());
+    });
+
+    // Mostra o teclado sempre visível
+    document.getElementById('tecladoNumerico').style.display = 'block';
+  };
+</script>
+
+</body>
+</html>
