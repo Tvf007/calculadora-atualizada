@@ -3,89 +3,122 @@
 <head>
   <meta charset="UTF-8" />
   <title>Sistema de Caixa</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 20px;
+      padding: 10px;
       background: #f4f4f4;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      font-size: 14px;
     }
+
     h1 {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
+      font-size: 18px;
     }
+
     .container {
       display: flex;
-      gap: 20px;
-      flex-grow: 1;
-      position: relative;
+      flex-direction: column;
+      gap: 15px;
     }
+
+    @media (min-width: 768px) {
+      .container {
+        flex-direction: row;
+      }
+    }
+
     .col-esquerda,
     .col-direita {
       background: #fff;
       border-radius: 8px;
-      padding: 15px;
+      padding: 12px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
-      flex: 1;
-      min-width: 300px;
     }
+
     .produto {
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
+
     label {
       display: block;
-      margin-bottom: 5px;
-      font-size: 16px;
+      margin-bottom: 4px;
       font-weight: bold;
+      font-size: 14px;
     }
+
     input[type="text"] {
-      width: 60px;
-      padding: 5px;
+      width: 100%;
+      max-width: 100%;
+      padding: 6px;
       font-size: 16px;
       border: 1px solid #ccc;
       outline: none;
+      box-sizing: border-box;
     }
+
     input:focus {
       border-color: #28a745;
       box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2);
     }
+
     ul {
       list-style-type: none;
       padding-left: 0;
       margin-top: 10px;
     }
+
     li {
-      background: #fff;
-      margin: 3px 0;
+      background: #fafafa;
+      margin: 2px 0;
       padding: 6px;
       border-radius: 4px;
-      font-size: 14px;
+      font-size: 13px;
     }
+
     #notaFiscal h2 {
       margin-top: 0;
+      font-size: 16px;
     }
+
     .rodape {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 15px;
-      padding: 15px;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 10px;
       background: #fff;
       border-radius: 8px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
-      font-size: 16px;
     }
+
+    @media (min-width: 768px) {
+      .rodape {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0;
+      }
+    }
+
     .rodape div {
-      flex: 1;
       text-align: center;
+      font-size: 14px;
     }
+
     .rodape button {
-      width: auto;
-      padding: 8px 15px;
+      width: 100%;
+      padding: 8px;
       font-size: 16px;
       background-color: #28a745;
       color: white;
@@ -93,24 +126,27 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
     .rodape button:hover {
       background-color: #218838;
     }
-    /* Teclado no canto superior direito */
+
+    /* Teclado Numérico */
     .teclado-numerico {
       position: fixed;
-      top: 20px;
-      right: 20px;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
       z-index: 1000;
       border: 1px solid #ccc;
       background: #f9f9f9;
-      border-radius: 8px;
+      border-radius: 8px 8px 0 0;
       padding: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      width: 220px;
-      max-width: 90vw;
-      user-select: none;
+      width: 100%;
+      max-width: 400px;
     }
+
     .fechar-teclado-btn {
       position: absolute;
       top: -10px;
@@ -127,60 +163,51 @@
       box-shadow: 0 0 5px rgba(0,0,0,0.3);
       z-index: 1001;
     }
+
     .teclado-numerico h3 {
       text-align: center;
       margin-top: 0;
       margin-bottom: 10px;
       font-size: 16px;
-      cursor: default;
     }
+
     .teclado-numerico button {
-      width: calc(30% - 8px);
+      width: calc(30% - 6px);
       height: 40px;
-      margin: 4px;
-      font-size: 16px;
+      margin: 3px;
+      font-size: 18px;
       cursor: pointer;
       border: 1px solid #aaa;
       border-radius: 5px;
       background-color: #fff;
     }
+
     .teclado-numerico button.enter {
       background-color: #28a745;
       color: white;
     }
+
     .teclado-numerico button.backspace {
       background-color: #dc3545;
       color: white;
     }
-    @media (max-width: 768px) {
-      .teclado-numerico {
-        position: static;
-        width: 100%;
-        margin-top: 20px;
-        top: auto;
-        right: auto;
-        transform: none;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-      .fechar-teclado-btn {
-        display: none;
-      }
-    }
+
     .nota-item {
       border: 1px solid #ccc;
       padding: 10px;
       margin-bottom: 10px;
       border-radius: 6px;
     }
+
     .nota-header {
       font-weight: bold;
       margin-bottom: 5px;
     }
+
     #mensagemValidacao {
       color: red;
       margin-top: 10px;
+      text-align: center;
     }
   </style>
 </head>
@@ -190,12 +217,12 @@
   <!-- Coluna Esquerda -->
   <div class="col-esquerda">
     <div class="produto">
-      <label for="quantidadePaoFrances">PAO FRANCES:</label>
+      <label for="quantidadePaoFrances">PAO FRANCÊS:</label>
       <input type="text" id="quantidadePaoFrances" onclick="abrirTeclado(this)">
       <span id="resultadoPaoFrances">R$ 0,00</span>
     </div>
     <div class="produto">
-      <label for="quantidadePaoDoceComum">PAO COMUM:</label>
+      <label for="quantidadePaoDoceComum">PAO DOCE COMUM:</label>
       <input type="text" id="quantidadePaoDoceComum" onclick="abrirTeclado(this)">
       <span id="resultadoPaoDoceComum">R$ 0,00</span>
     </div>
@@ -209,7 +236,7 @@
       <input type="text" id="valorEntrada" placeholder="Digite valor" onclick="abrirTeclado(this)">
       <span id="resultadoAcumulado">R$ 0,00</span>
     </div>
-    <!-- Rodapé dentro da coluna esquerda -->
+    <!-- Rodapé -->
     <div class="rodape">
       <div>
         <strong>Total:</strong><br>
@@ -223,11 +250,12 @@
         <strong>Troco:</strong><br>
         <span id="valorTroco">R$ 0,00</span>
       </div>
-      <div style="text-align:right;">
+      <div>
         <button onclick="proximoCliente()">Finalizar Venda</button>
       </div>
     </div>
   </div>
+
   <!-- Coluna Direita -->
   <div class="col-direita">
     <div id="notaFiscal">
@@ -236,18 +264,20 @@
     </div>
   </div>
 </div>
+
 <!-- Campos ocultos para histórico -->
 <p style="display:none"><span id="nfTotal">R$ 0,00</span></p>
 <p style="display:none"><span id="nfRecebido">R$ 0,00</span></p>
 <p style="display:none"><span id="nfTroco">R$ 0,00</span></p>
-<!-- Teclado Numérico -->
+<div id="historicoNotas"></div>
+
+<!-- Teclado Virtual -->
 <div class="teclado-numerico" id="tecladoNumerico">
   <div class="fechar-teclado-btn" onclick="fecharTeclado()" title="Fechar">×</div>
   <h3>Teclado Virtual</h3>
   <div id="botoesTeclado" style="display:flex; flex-wrap:wrap; justify-content:center;"></div>
 </div>
-<!-- Histórico abaixo do teclado -->
-<div id="historicoNotas"></div>
+
 <script>
   const botoes = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', '⌫', 'Enter'];
   const botoesDiv = document.getElementById('botoesTeclado');
@@ -315,7 +345,9 @@
     if (campoFocado) {
       if (valor === 'Enter') {
         if (campoFocado.id === 'valorEntrada') adicionarOutroProduto();
-        else if (campoFocado.id === 'valorRecebido') atualizarTroco();
+        else if (campoFocado.id === 'valorRecebido') {
+          atualizarTroco();
+        }
         return;
       } else if (valor === '⌫') {
         limparCampo();
@@ -325,7 +357,6 @@
       const event = new Event('input', { bubbles: true });
       campoFocado.dispatchEvent(event);
 
-      // Atualiza o troco automaticamente se o campo for "valorRecebido"
       if (campoFocado.id === 'valorRecebido') {
         atualizarTroco();
       }
@@ -397,6 +428,7 @@
     const recebidoTexto = document.getElementById('valorRecebido').value.trim().replace(',', '.');
     const recebido = parseFloat(recebidoTexto) || 0;
     const msgElemento = document.getElementById('mensagemValidacao');
+
     if (recebidoTexto === '') {
       if (!msgElemento) {
         const divMsg = document.createElement('div');
@@ -410,6 +442,7 @@
       }
       return;
     }
+
     if (recebido < total) {
       if (!msgElemento) {
         const divMsg = document.createElement('div');
@@ -423,6 +456,7 @@
       }
       return;
     }
+
     if (msgElemento) msgElemento.remove();
 
     const itens = Array.from(document.getElementById('listaItens').children).map(li => li.textContent);
@@ -473,57 +507,6 @@
     });
   }
 
-  function dragElement(element) {
-    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    let touchDown = false;
-    element.onmousedown = dragMouseDown;
-    function dragMouseDown(e) {
-      e = e || window.event;
-      e.preventDefault();
-      pos3 = e.clientX;
-      pos4 = e.clientY;
-      document.onmouseup = closeDragElement;
-      document.onmousemove = elementDrag;
-    }
-    function elementDrag(e) {
-      e = e || window.event;
-      e.preventDefault();
-      pos1 = pos3 - e.clientX;
-      pos2 = pos4 - e.clientY;
-      pos3 = e.clientX;
-      pos4 = e.clientY;
-      element.style.top = (element.offsetTop - pos2) + 'px';
-      element.style.left = (element.offsetLeft - pos1) + 'px';
-    }
-    function closeDragElement() {
-      document.onmouseup = null;
-      document.onmousemove = null;
-    }
-    element.ontouchstart = function(e) {
-      touchDown = true;
-      const t = e.touches[0];
-      pos3 = t.clientX;
-      pos4 = t.clientY;
-      document.ontouchend = closeTouchElement;
-      document.ontouchmove = touchMove;
-    };
-    function touchMove(e) {
-      if (!touchDown) return;
-      const t = e.touches[0];
-      pos1 = pos3 - t.clientX;
-      pos2 = pos4 - t.clientY;
-      pos3 = t.clientX;
-      pos4 = t.clientY;
-      element.style.top = (element.offsetTop - pos2) + 'px';
-      element.style.left = (element.offsetLeft - pos1) + 'px';
-    }
-    function closeTouchElement() {
-      touchDown = false;
-      document.ontouchend = null;
-      document.ontouchmove = null;
-    }
-  }
-
   function registrarServiceWorker() {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js')
@@ -534,11 +517,13 @@
 
   window.onload = () => {
     registrarServiceWorker();
-    // Impede digitação física
+
+    // Impede o teclado físico do sistema
     document.querySelectorAll("input[type='text']").forEach(input => {
-      input.addEventListener('keydown', e => e.preventDefault());
+      input.addEventListener('focus', e => e.target.blur());
     });
-    // Mostra o teclado sempre visível
+
+    // Mostra o teclado virtual
     document.getElementById('tecladoNumerico').style.display = 'block';
   };
 </script>
