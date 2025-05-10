@@ -16,7 +16,6 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      overflow-x: hidden;
     }
     h1 {
       text-align: center;
@@ -25,8 +24,10 @@
     }
     .container {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       gap: 15px;
+      flex-grow: 1;
+      flex-wrap: wrap;
     }
     .col-esquerda,
     .col-direita {
@@ -35,6 +36,12 @@
       padding: 12px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
       width: 100%;
+    }
+    @media (min-width: 768px) {
+      .col-esquerda,
+      .col-direita {
+        width: 49%;
+      }
     }
     .produto {
       margin-bottom: 10px;
@@ -74,21 +81,23 @@
     }
     .rodape {
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
+      justify-content: space-between;
+      align-items: center;
       margin-top: 10px;
       padding: 10px;
       background: #fff;
       border-radius: 8px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
       font-size: 14px;
+      position: relative;
+      z-index: 1;
     }
     .rodape div {
       margin-bottom: 6px;
     }
     .rodape button {
-      width: 100%;
-      padding: 10px;
+      width: auto;
+      padding: 10px 15px;
       font-size: 16px;
       background-color: #28a745;
       color: white;
@@ -196,28 +205,28 @@
   <div class="col-esquerda">
     <div class="produto">
       <label for="quantidadePaoFrances">PAO FRANCES:</label>
-      <input type="text" id="quantidadePaoFrances" onclick="abrirTeclado(this)">
+      <input type="text" id="quantidadePaoFrances" onclick="abrirTeclado(this)" readonly>
       <span id="resultadoPaoFrances">R$ 0,00</span>
     </div>
     <div class="produto">
       <label for="quantidadePaoDoceComum">PAO COMUM:</label>
-      <input type="text" id="quantidadePaoDoceComum" onclick="abrirTeclado(this)">
+      <input type="text" id="quantidadePaoDoceComum" onclick="abrirTeclado(this)" readonly>
       <span id="resultadoPaoDoceComum">R$ 0,00</span>
     </div>
     <div class="produto">
       <label for="quantidadePaoDoceEspecial">PAO DOCE ESPECIAL:</label>
-      <input type="text" id="quantidadePaoDoceEspecial" onclick="abrirTeclado(this)">
+      <input type="text" id="quantidadePaoDoceEspecial" onclick="abrirTeclado(this)" readonly>
       <span id="resultadoPaoDoceEspecial">R$ 0,00</span>
     </div>
     <div class="produto">
       <label for="valorEntrada">OUTRO PRODUTO (R$):</label>
-      <input type="text" id="valorEntrada" placeholder="Digite valor" onclick="abrirTeclado(this)">
+      <input type="text" id="valorEntrada" placeholder="Digite valor" onclick="abrirTeclado(this)" readonly>
       <span id="resultadoAcumulado">R$ 0,00</span>
     </div>
     <!-- Rodapé dentro da coluna esquerda -->
     <div class="rodape">
       <div><strong>Total:</strong> <span id="valorTotal">R$ 0,00</span></div>
-      <div><strong>Recebido:</strong> <input type="text" id="valorRecebido" onclick="abrirTeclado(this)"></div>
+      <div><strong>Recebido:</strong> <input type="text" id="valorRecebido" onclick="abrirTeclado(this)" readonly></div>
       <div><strong>Troco:</strong> <span id="valorTroco">R$ 0,00</span></div>
       <button onclick="proximoCliente()">Finalizar Venda</button>
     </div>
@@ -479,10 +488,13 @@
 
   window.onload = () => {
     registrarServiceWorker();
-    // Impede digitação física
+
+    // Impede o teclado físico do celular
     document.querySelectorAll("input[type='text']").forEach(input => {
-      input.addEventListener('keydown', e => e.preventDefault());
+      input.setAttribute("readonly", true);
+      input.addEventListener("focus", () => abrirTeclado(input));
     });
+
     // Mostra o teclado sempre visível
     document.getElementById('tecladoNumerico').style.display = 'block';
   };
