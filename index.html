@@ -7,50 +7,64 @@
   <style>
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 10px;
       background: #f4f4f4;
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
+      min-height: 100vh;
     }
     h1 {
       text-align: center;
-      margin-bottom: 15px;
-      font-size: 1.5em;
+      padding: 15px;
+      font-size: 1.2em;
+      background-color: #28a745;
+      color: white;
+      margin-bottom: 10px;
     }
     .container {
       display: flex;
       flex-direction: row;
-      gap: 15px;
       flex-grow: 1;
-      flex-wrap: wrap;
+      gap: 15px;
+      padding: 10px;
+      overflow: hidden;
     }
     .col-esquerda,
     .col-direita {
       background: #fff;
       border-radius: 8px;
-      padding: 12px;
+      padding: 15px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
-      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      overflow-y: auto;
     }
-    @media (min-width: 768px) {
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
       .col-esquerda,
       .col-direita {
-        width: 49%;
+        height: auto;
+        margin-bottom: 15px;
       }
     }
     .produto {
-      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
     }
     label {
-      display: block;
-      margin-bottom: 4px;
       font-size: 14px;
-      font-weight: bold;
+      flex: 2;
     }
     input[type="text"] {
       width: 60px;
@@ -58,46 +72,36 @@
       font-size: 16px;
       border: 1px solid #ccc;
       outline: none;
+      text-align: right;
     }
-    input:focus {
-      border-color: #28a745;
-      box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2);
-    }
-    ul {
-      list-style-type: none;
-      padding-left: 0;
-      margin-top: 8px;
-    }
-    li {
-      background: #fff;
-      margin: 2px 0;
-      padding: 6px;
-      border-radius: 4px;
+    .preco {
       font-size: 14px;
+      color: green;
+      flex: 1;
+      text-align: right;
     }
-    #notaFiscal h2 {
-      margin-top: 0;
-      font-size: 1.2em;
-    }
+
     .rodape {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 10px;
-      padding: 10px;
+      position: sticky;
+      bottom: 0;
       background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-      font-size: 14px;
-      position: relative;
-      z-index: 1;
+      padding: 15px;
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 999;
     }
+
     .rodape div {
-      margin-bottom: 6px;
+      flex: 1;
+      text-align: center;
+      font-size: 14px;
     }
+
     .rodape button {
-      width: auto;
-      padding: 10px 15px;
+      flex: 2;
+      padding: 12px;
       font-size: 16px;
       background-color: #28a745;
       color: white;
@@ -105,6 +109,7 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
     .rodape button:hover {
       background-color: #218838;
     }
@@ -116,36 +121,21 @@
       left: 0;
       right: 0;
       z-index: 1000;
-      border-top: 1px solid #ccc;
       background: #f9f9f9;
-      border-radius: 10px 10px 0 0;
+      border-top: 1px solid #ccc;
       padding: 10px;
       box-shadow: 0 -2px 10px rgba(0,0,0,0.15);
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-    .fechar-teclado-btn {
-      position: absolute;
-      top: -10px;
-      right: 10px;
-      width: 28px;
-      height: 28px;
-      background-color: red;
-      color: white;
-      font-size: 18px;
-      text-align: center;
-      line-height: 26px;
-      border-radius: 50%;
-      cursor: pointer;
-      z-index: 1001;
-      display: none;
-    }
+
     .teclado-numerico h3 {
       margin-top: 0;
       margin-bottom: 8px;
       font-size: 16px;
     }
+
     .teclado-numerico button {
       width: 28%;
       height: 40px;
@@ -156,79 +146,62 @@
       border-radius: 5px;
       background-color: #fff;
     }
+
     .teclado-numerico button.enter {
       background-color: #28a745;
       color: white;
     }
+
     .teclado-numerico button.backspace {
       background-color: #dc3545;
       color: white;
     }
 
-    @media (min-width: 600px) {
-      .teclado-numerico {
-        bottom: auto;
-        top: 20px;
-        right: 20px;
-        left: auto;
-        width: 220px;
-        max-width: 90vw;
-        border-radius: 8px;
-        padding: 10px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      }
-      .fechar-teclado-btn {
-        display: block;
-      }
+    ul {
+      list-style-type: none;
+      padding-left: 0;
     }
 
-    .nota-item {
-      border: 1px solid #ccc;
-      padding: 8px;
-      margin-bottom: 10px;
-      border-radius: 6px;
+    li {
+      margin: 4px 0;
+      padding: 6px;
+      background: #f9f9f9;
+      border-radius: 4px;
     }
-    .nota-header {
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
+
     #mensagemValidacao {
       color: red;
       margin-top: 10px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
+
 <h1>Caixa Aberto</h1>
+
 <div class="container">
   <!-- Coluna Esquerda -->
   <div class="col-esquerda">
     <div class="produto">
-      <label for="quantidadePaoFrances">PAO FRANCES:</label>
+      <label for="quantidadePaoFrances">PÃO FRANCÊS:</label>
       <input type="text" id="quantidadePaoFrances" onclick="abrirTeclado(this)" readonly>
-      <span id="resultadoPaoFrances">R$ 0,00</span>
+      <span class="preco">R$ 0,70</span>
     </div>
     <div class="produto">
-      <label for="quantidadePaoDoceComum">PAO COMUM:</label>
+      <label for="quantidadePaoDoceComum">PÃO COMUM:</label>
       <input type="text" id="quantidadePaoDoceComum" onclick="abrirTeclado(this)" readonly>
-      <span id="resultadoPaoDoceComum">R$ 0,00</span>
+      <span class="preco">R$ 0,70</span>
     </div>
     <div class="produto">
-      <label for="quantidadePaoDoceEspecial">PAO DOCE ESPECIAL:</label>
+      <label for="quantidadePaoDoceEspecial">PÃO DOCE ESPECIAL:</label>
       <input type="text" id="quantidadePaoDoceEspecial" onclick="abrirTeclado(this)" readonly>
-      <span id="resultadoPaoDoceEspecial">R$ 0,00</span>
+      <span class="preco">R$ 0,80</span>
     </div>
     <div class="produto">
       <label for="valorEntrada">OUTRO PRODUTO (R$):</label>
       <input type="text" id="valorEntrada" placeholder="Digite valor" onclick="abrirTeclado(this)" readonly>
       <span id="resultadoAcumulado">R$ 0,00</span>
-    </div>
-    <!-- Rodapé dentro da coluna esquerda -->
-    <div class="rodape">
-      <div><strong>Total:</strong> <span id="valorTotal">R$ 0,00</span></div>
-      <div><strong>Recebido:</strong> <input type="text" id="valorRecebido" onclick="abrirTeclado(this)" readonly></div>
-      <div><strong>Troco:</strong> <span id="valorTroco">R$ 0,00</span></div>
-      <button onclick="proximoCliente()">Finalizar Venda</button>
     </div>
   </div>
 
@@ -238,18 +211,20 @@
       <h2>Resumo</h2>
       <ul id="listaItens"></ul>
     </div>
+    <div id="historicoNotas"></div>
   </div>
 </div>
 
-<!-- Campos ocultos para histórico -->
-<p style="display:none"><span id="nfTotal">R$ 0,00</span></p>
-<p style="display:none"><span id="nfRecebido">R$ 0,00</span></p>
-<p style="display:none"><span id="nfTroco">R$ 0,00</span></p>
-<div id="historicoNotas"></div>
+<!-- Rodapé com Total, Recebido, Troco e Botão -->
+<div class="rodape">
+  <div><strong>Total:</strong><br><span id="valorTotal">R$ 0,00</span></div>
+  <div><strong>Recebido:</strong><br><input type="text" id="valorRecebido" onclick="abrirTeclado(this)" readonly></div>
+  <div><strong>Troco:</strong><br><span id="valorTroco">R$ 0,00</span></div>
+  <button onclick="proximoCliente()">Finalizar Venda</button>
+</div>
 
 <!-- Teclado Numérico -->
 <div class="teclado-numerico" id="tecladoNumerico">
-  <div class="fechar-teclado-btn" onclick="fecharTeclado()" title="Fechar">×</div>
   <h3>Teclado Virtual</h3>
   <div id="botoesTeclado" style="display:flex; flex-wrap:wrap; justify-content:center;"></div>
 </div>
@@ -314,7 +289,6 @@
 
   function abrirTeclado(campo) {
     campoFocado = campo;
-    campo.focus();
   }
 
   function digitarTeclado(valor) {
@@ -346,11 +320,9 @@
   }
 
   function fecharTeclado() {
-    document.getElementById('tecladoNumerico').style.display = 'none';
-    if (campoFocado) {
-      campoFocado.blur();
-      campoFocado = null;
-    }
+    document.getElementById('tecladoNumerico').style.display = 'block';
+    if (campoFocado) campoFocado.blur();
+    campoFocado = null;
   }
 
   function adicionarOutroProduto() {
@@ -362,11 +334,10 @@
       const novoItem = { id: id, texto: `${nome} - ${formatar(valor)}` };
       produtosAdicionais.push(novoItem);
       totalAcumulado += valor;
-      const lista = document.getElementById('listaItens');
       const li = document.createElement('li');
       li.id = id;
       li.textContent = novoItem.texto;
-      lista.appendChild(li);
+      document.getElementById('listaItens').appendChild(li);
       document.getElementById('resultadoAcumulado').textContent = formatar(totalAcumulado);
       document.getElementById('valorEntrada').value = '';
       atualizarTotalGeral();
@@ -403,32 +374,13 @@
     const recebido = parseFloat(recebidoTexto) || 0;
     const msgElemento = document.getElementById('mensagemValidacao');
     if (recebidoTexto === '') {
-      if (!msgElemento) {
-        const divMsg = document.createElement('div');
-        divMsg.id = 'mensagemValidacao';
-        divMsg.style.color = 'red';
-        divMsg.style.marginTop = '10px';
-        divMsg.textContent = 'Falta preencher valor recebido';
-        document.querySelector('.rodape').before(divMsg);
-      } else {
-        msgElemento.textContent = 'Falta preencher valor recebido';
-      }
+      alert('Falta preencher valor recebido');
       return;
     }
     if (recebido < total) {
-      if (!msgElemento) {
-        const divMsg = document.createElement('div');
-        divMsg.id = 'mensagemValidacao';
-        divMsg.style.color = 'red';
-        divMsg.style.marginTop = '10px';
-        divMsg.textContent = 'Valor insuficiente';
-        document.querySelector('.rodape').before(divMsg);
-      } else {
-        msgElemento.textContent = 'Valor insuficiente';
-      }
+      alert('Valor insuficiente');
       return;
     }
-    if (msgElemento) msgElemento.remove();
 
     const itens = Array.from(document.getElementById('listaItens').children).map(li => li.textContent);
     const data = new Date().toLocaleString();
@@ -441,21 +393,16 @@
       data
     });
 
+    // Limpa dados
     document.getElementById('quantidadePaoFrances').value = '';
     document.getElementById('quantidadePaoDoceComum').value = '';
     document.getElementById('quantidadePaoDoceEspecial').value = '';
     document.getElementById('valorEntrada').value = '';
-    document.getElementById('resultadoPaoFrances').textContent = 'R$ 0,00';
-    document.getElementById('resultadoPaoDoceComum').textContent = 'R$ 0,00';
-    document.getElementById('resultadoPaoDoceEspecial').textContent = 'R$ 0,00';
     document.getElementById('resultadoAcumulado').textContent = 'R$ 0,00';
     document.getElementById('listaItens').innerHTML = '';
     document.getElementById('valorTotal').textContent = 'R$ 0,00';
     document.getElementById('valorRecebido').value = '';
     document.getElementById('valorTroco').textContent = 'R$ 0,00';
-    document.getElementById('nfTotal').textContent = 'R$ 0,00';
-    document.getElementById('nfRecebido').textContent = 'R$ 0,00';
-    document.getElementById('nfTroco').textContent = 'R$ 0,00';
     totalAcumulado = 0;
     produtosAdicionais = [];
     renderizarHistorico();
@@ -463,12 +410,12 @@
 
   function renderizarHistorico() {
     const container = document.getElementById('historicoNotas');
-    container.innerHTML = '<h2>Histórico de Vendas</h2>';
-    historico.forEach(nota => {
+    container.innerHTML = '<h2>Histórico</h2>';
+    historico.slice(-3).reverse().forEach(nota => {
       const div = document.createElement('div');
       div.className = 'nota-item';
       div.innerHTML = `
-        <div class="nota-header">Resumo #${nota.numero} - ${nota.data}</div>
+        <div><strong>Resumo #${nota.numero}</strong> - ${nota.data}</div>
         <ul>${nota.itens.map(item => `<li>${item}</li>`).join('')}</ul>
         <div>Total: ${nota.total}</div>
         <div>Recebido: ${nota.recebido}</div>
@@ -478,24 +425,11 @@
     });
   }
 
-  function registrarServiceWorker() {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(() => console.log('✅ Service Worker Registrado'))
-        .catch(err => console.error('❌ Erro ao Registrar SW:', err));
-    }
-  }
-
   window.onload = () => {
-    registrarServiceWorker();
-
-    // Impede o teclado físico do celular
     document.querySelectorAll("input[type='text']").forEach(input => {
       input.setAttribute("readonly", true);
       input.addEventListener("focus", () => abrirTeclado(input));
     });
-
-    // Mostra o teclado sempre visível
     document.getElementById('tecladoNumerico').style.display = 'block';
   };
 </script>
